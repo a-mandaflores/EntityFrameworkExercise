@@ -35,7 +35,21 @@ public class CustomersController(StoreContext context) : ControllerBase
     [HttpPut("{id}")]
     public async Task<IActionResult> PutCustomer(int id, Customer customer)
     {
-        return default;
+        if (id != customer.Id) {
+            return BadRequest();
+        }
+        
+        context.Entry(customer).State = EntityState.Modified;
+            
+        try
+        {
+            await context.SaveChangesAsync();
+        }
+        catch (Exception ex)
+        {
+            return BadRequest(ex.Message);
+        }
+        return NoContent();
     }
 
     // POST: api/Customers
@@ -51,6 +65,17 @@ public class CustomersController(StoreContext context) : ControllerBase
     [HttpDelete("{id}")]
     public async Task<IActionResult> DeleteCustomer(int id)
     {
-        return default;
-    }
+        var customer = await context.Customers.FindAsync(id);
+
+        if (customer == null) 
+        { 
+            return NotFound(); 
+        }
+
+        context.Customers.Remove(customer);
+
+        await context.SaveChangesAsync();
+
+        return NoContent(); 
+    }   
 }
