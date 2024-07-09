@@ -36,7 +36,7 @@ public class CustomersController(StoreContext context) : ControllerBase
     public async Task<IActionResult> PutCustomer(int id, Customer customer)
     {
         if (id != customer.Id) {
-            return BadRequest();
+            return NotFound();
         }
         
         context.Entry(customer).State = EntityState.Modified;
@@ -77,5 +77,7 @@ public class CustomersController(StoreContext context) : ControllerBase
         await context.SaveChangesAsync();
 
         return NoContent(); 
-    }   
+    }
+
+   
 }
