@@ -13,7 +13,7 @@ namespace EntityFrameworkExercise.Controllers;
 public class ProductsController(StoreContext context) : ControllerBase
 {
     [ProducesResponseType(StatusCodes.Status200OK)]
-    [SwaggerOperation(Summary = "Lista dos produtos", Description = "Lista todos os produtos")]
+    [SwaggerOperation(Summary = "Lista dos produtos", Description = "Retorna uma lista com todos os produtos")]
     [HttpGet]
     public async Task<IActionResult> GetProducts()
     {
@@ -35,7 +35,8 @@ public class ProductsController(StoreContext context) : ControllerBase
     }
 
     [ProducesResponseType(StatusCodes.Status200OK)]
-    [SwaggerOperation(Summary = "Lista um porduto", Description = "Lista o produto conforme o id passado pela URL")]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
+    [SwaggerOperation(Summary = "Listar um porduto", Description = "Lista o produto conforme o id passado pela URL")]
     [HttpGet("{id}")]
     public async Task<IActionResult> GetProduct(Guid id)
     {
@@ -59,7 +60,7 @@ public class ProductsController(StoreContext context) : ControllerBase
     [ProducesResponseType(StatusCodes.Status204NoContent)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
-    [SwaggerOperation(Summary = "Editar produto", Description = "Fas a edição do produto")]
+    [SwaggerOperation(Summary = "Editar produto", Description = "Faz a edição do cadastro do produto")]
     [HttpPut("{id}")]
     public async Task<IActionResult> PutProduct(Guid id, ProductUpdateRequest update)
     {
@@ -85,7 +86,7 @@ public class ProductsController(StoreContext context) : ControllerBase
 
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     [ProducesResponseType(StatusCodes.Status204NoContent)]
-    [SwaggerOperation(Summary = "")]
+    [SwaggerOperation(Summary = "Criar produto", Description = "Metodo para criação do produto")]
     [HttpPost]
     public async Task<IActionResult> PostProduct(ProductCreateRequest create)
     {
@@ -107,7 +108,9 @@ public class ProductsController(StoreContext context) : ControllerBase
         return NoContent();
     }
 
-    // DELETE: api/Products/5
+    [ProducesResponseType(StatusCodes.Status204NoContent)]
+    [ProducesResponseType(StatusCodes.Status400BadRequest)]
+    [SwaggerOperation(Summary = "Deletar produto", Description = "Metodo para deletar um produto")]
     [HttpDelete("{id}")]
     public async Task<IActionResult> DeleteProduct(Guid id)
     {

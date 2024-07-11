@@ -13,7 +13,7 @@ namespace EntityFrameworkExercise.Controllers;
 [ApiController]
 public class CustomersController(StoreContext context) : ControllerBase
 {
-    [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(List<CustomerReadResponse>))]
+    [ProducesResponseType(StatusCodes.Status200OK))]
     [SwaggerOperation(Summary = "Listar todos os elementos", Description = "Retorna uma lista com todos os clientes e a quantidade de compras")]
     [HttpGet]
     public async Task<IActionResult> GetCustomers()
@@ -30,7 +30,8 @@ public class CustomersController(StoreContext context) : ControllerBase
             return Ok(customerResponses);
     }
 
-    [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(CustomerReadResponse))]
+    [ProducesResponseType(StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
     [SwaggerOperation(Summary = "Lista apenas um cliente", Description = "Passamos o id pela rota e retorna o cliente especifico")]
     [HttpGet("{id}")]
     public async Task<IActionResult> GetCustomer(Guid id)

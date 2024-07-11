@@ -3,6 +3,7 @@ using EntityFrameworkExercise.Models;
 using EntityFrameworkExercise.ViewModel.Seller;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using Swashbuckle.AspNetCore.Annotations;
 
 namespace EntityFrameworkExercise.Controllers;
 
@@ -10,7 +11,8 @@ namespace EntityFrameworkExercise.Controllers;
 [ApiController]
 public class SellersController(StoreContext context) : ControllerBase
 {
-    // GET: api/Sellers
+    [ProducesResponseType(StatusCodes.Status200OK)]
+    [SwaggerOperation(Summary = "Lista dos vendedores", Description = "Retorna uma lista com todos os vendedores")]
     [HttpGet]
     public async Task<IActionResult> GetSellers()
     {
@@ -19,7 +21,7 @@ public class SellersController(StoreContext context) : ControllerBase
             {
                 Id = x.Uuid,
                 Name = x.Name,
-                Sales = x.Sales,
+                Sales = x.Sales.Count,
             })
             .ToListAsync();
 
@@ -30,7 +32,9 @@ public class SellersController(StoreContext context) : ControllerBase
         return Ok(sellers);
     }
 
-    // GET: api/Sellers/5
+    [ProducesResponseType(StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
+    [SwaggerOperation(Summary = "Lista dos vendedores", Description = "Retorna um vendedor pelo Id")]
     [HttpGet("{id}")]
     public async Task<IActionResult> GetSeller(Guid id)
     {
@@ -40,7 +44,7 @@ public class SellersController(StoreContext context) : ControllerBase
             {
                 Id = x.Uuid,
                 Name = x.Name,
-                Sales = x.Sales,
+                Sales = x.Sales.Count,
             })
             .FirstOrDefaultAsync();
         if (seller == null)
@@ -51,7 +55,33 @@ public class SellersController(StoreContext context) : ControllerBase
         return Ok(seller);
     }
 
-    // PUT: api/Sellers/5
+    [ProducesResponseType(StatusCodes.Status204NoContent)]
+    [ProducesResponseType(StatusCodes.Status400BadRequest)]
+    [SwaggerOperation(Summary = "Vendas por vendedor", Description = "Metodo que tras todas as vendas de um vendedor")]
+    [HttpGet("{id}/sales")]
+    public async Task<IActionResult> GetSalesForSellers(Guid id)
+    {
+        var seller = await context.Sellers
+            .Where(x => x.Uuid == id)
+            .Select(x => new SalesForSallersReadResponse
+            {
+                Name = x.Name,
+                Sales = x.Sales,
+            })
+            .FirstOrDefaultAsync();
+
+        if (seller == null)
+        {
+            return NotFound();
+        }
+
+        return Ok(seller);
+    }
+
+    [ProducesResponseType(StatusCodes.Status204NoContent)]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
+    [ProducesResponseType(StatusCodes.Status400BadRequest)]
+    [SwaggerOperation(Summary = "Editar produto", Description = "Faz a edição do cadastro do vendedor")]
     [HttpPut("{id}")]
     public async Task<IActionResult> PutSeller(Guid id, SellerUpdateRequest update)
     {
@@ -79,7 +109,9 @@ public class SellersController(StoreContext context) : ControllerBase
         return NoContent();
     }
 
-    // POST: api/Sellers
+    [ProducesResponseType(StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(StatusCodes.Status204NoContent)]
+    [SwaggerOperation(Summary = "Criar vendedor", Description = "Metodo para criação do vendedor")]
     [HttpPost]
     public async Task<IActionResult> PostSeller(SellerCreateRequest create)
     {
@@ -101,7 +133,9 @@ public class SellersController(StoreContext context) : ControllerBase
         return NoContent();
     }
 
-    // DELETE: api/Sellers/5
+    [ProducesResponseType(StatusCodes.Status204NoContent)]
+    [ProducesResponseType(StatusCodes.Status400BadRequest)]
+    [SwaggerOperation(Summary = "Deletar produto", Description = "Metodo para deletar um vendedor")]
     [HttpDelete("{id}")]
     public async Task<IActionResult> DeleteSeller(Guid id)
     {
