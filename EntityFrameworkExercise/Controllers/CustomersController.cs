@@ -1,5 +1,7 @@
-﻿using EntityFrameworkExercise.Data;
+﻿using Bogus.DataSets;
+using EntityFrameworkExercise.Data;
 using EntityFrameworkExercise.Models;
+using EntityFrameworkExercise.ViewModel;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using System.Collections.Generic;
@@ -10,37 +12,51 @@ namespace EntityFrameworkExercise.Controllers;
 [ApiController]
 public class CustomersController(StoreContext context) : ControllerBase
 {
+
     // GET: api/Customers
     [HttpGet]
-    public async Task<ActionResult<IEnumerable<Customer>>> GetCustomers()
+    public async Task<ActionResult<IEnumerable<CustomerReadResponse>>> GetCustomers()
     {
-        return await context.Customers.ToListAsync();
+        var customerResponses = await context.Customers
+            .Select(x => new CustomerReadResponse
+            {
+                Id = x.Id,
+                Name = x.Name,
+                Sale = x.Sales.Count
+            })
+            .ToListAsync();
+
+            return Ok(customerResponses);
     }
 
     // GET: api/Customers/5
     [HttpGet("{id}")]
-    public async Task<ActionResult<Customer>> GetCustomer(int id)
+    public async Task<ActionResult<CustomerReadResponse>> GetCustomer(int id)
     {
-        var customer = await context.Customers.FirstOrDefaultAsync(x => x.Id == id);
-
-        if (customer == null)
-        {
-            return NotFound();
-        }
+        var customer = await context.Customers
+            .Where(x => x.Id == id)
+            .Select(x => new CustomerReadResponse
+            {
+                Id = x.Id,
+                Name = x.Name,
+                Sale = x.Sales.Count
+            })
+            .FirstOrDefaultAsync();
 
         return customer;
     }
 
     // PUT: api/Customers/5
     [HttpPut("{id}")]
-    public async Task<IActionResult> PutCustomer(int id, Customer customer)
+    public async Task<IActionResult> PutCustomer(int id, CustomerUpdateRequest edit)
     {
-        if (id != customer.Id) {
-            return NotFound();
+        var customer = await context.Customers.FindAsync(id);
+        if (customer == null) {
+            return BadRequest();
         }
-        
-        context.Entry(customer).State = EntityState.Modified;
-            
+
+        customer.Name = edit.Name;
+
         try
         {
             await context.SaveChangesAsync();
@@ -54,11 +70,18 @@ public class CustomersController(StoreContext context) : ControllerBase
 
     // POST: api/Customers
     [HttpPost]
-    public async Task<ActionResult<Customer>> PostCustomer(Customer customer)
+    public async Task<ActionResult<Customer>> PostCustomer(CustomerCreateRequest create)
     {
+        var customer = new Customer
+        {
+            Name = create.Name,
+        };
+
         context.Customers.Add(customer);
+
         await context.SaveChangesAsync();
-        return CreatedAtAction(nameof(GetCustomer), new { id = customer.Id }, customer);
+
+        return CreatedAtAction(nameof(GetCustomer), new { id = customer.Id }, null);
     }
 
     // DELETE: api/Customers/5
