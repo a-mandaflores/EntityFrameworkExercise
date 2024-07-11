@@ -11,12 +11,20 @@
 	<ItemGroup>
 	  <Compile Remove="Controllers\SwaggerExample\**" />
 	  <Compile Remove="NovaPasta2\**" />
+	  <Compile Remove="ViewModel\NovaPasta1\**" />
+	  <Compile Remove="ViewModel\NovaPasta\**" />
 	  <Content Remove="Controllers\SwaggerExample\**" />
 	  <Content Remove="NovaPasta2\**" />
+	  <Content Remove="ViewModel\NovaPasta1\**" />
+	  <Content Remove="ViewModel\NovaPasta\**" />
 	  <EmbeddedResource Remove="Controllers\SwaggerExample\**" />
 	  <EmbeddedResource Remove="NovaPasta2\**" />
+	  <EmbeddedResource Remove="ViewModel\NovaPasta1\**" />
+	  <EmbeddedResource Remove="ViewModel\NovaPasta\**" />
 	  <None Remove="Controllers\SwaggerExample\**" />
 	  <None Remove="NovaPasta2\**" />
+	  <None Remove="ViewModel\NovaPasta1\**" />
+	  <None Remove="ViewModel\NovaPasta\**" />
 	</ItemGroup>
 
 	<ItemGroup>

@@ -34,7 +34,7 @@ public class SellersController(StoreContext context) : ControllerBase
 
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
-    [SwaggerOperation(Summary = "Lista dos vendedores", Description = "Retorna um vendedor pelo Id")]
+    [SwaggerOperation(Summary = "Lista e um vendedor", Description = "Retorna um vendedor pelo Id")]
     [HttpGet("{id}")]
     public async Task<IActionResult> GetSeller(Guid id)
     {
@@ -58,7 +58,7 @@ public class SellersController(StoreContext context) : ControllerBase
     [ProducesResponseType(StatusCodes.Status204NoContent)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     [SwaggerOperation(Summary = "Vendas por vendedor", Description = "Metodo que tras todas as vendas de um vendedor")]
-    [HttpGet("{id}/sales")]
+    [HttpGet("{id}/Sales")]
     public async Task<IActionResult> GetSalesForSellers(Guid id)
     {
         var seller = await context.Sellers

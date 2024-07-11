@@ -36,7 +36,7 @@ public class ProductsController(StoreContext context) : ControllerBase
 
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
-    [SwaggerOperation(Summary = "Listar um porduto", Description = "Lista o produto conforme o id passado pela URL")]
+    [SwaggerOperation(Summary = "Lista um porduto", Description = "Lista o produto conforme o id passado pela URL")]
     [HttpGet("{id}")]
     public async Task<IActionResult> GetProduct(Guid id)
     {

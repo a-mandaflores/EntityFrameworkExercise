@@ -13,8 +13,8 @@ namespace EntityFrameworkExercise.Controllers;
 [ApiController]
 public class CustomersController(StoreContext context) : ControllerBase
 {
-    [ProducesResponseType(StatusCodes.Status200OK))]
-    [SwaggerOperation(Summary = "Listar todos os elementos", Description = "Retorna uma lista com todos os clientes e a quantidade de compras")]
+    [ProducesResponseType(StatusCodes.Status200OK)]
+    [SwaggerOperation(Summary = "Lista todos os elementos", Description = "Retorna uma lista com todos os clientes e a quantidade de compras")]
     [HttpGet]
     public async Task<IActionResult> GetCustomers()
     {
