@@ -84,6 +84,7 @@ public class CustomersController(StoreContext context) : ControllerBase
     {
         var customer = new Customer
         {
+           
             Name = create.Name,
         };
 
