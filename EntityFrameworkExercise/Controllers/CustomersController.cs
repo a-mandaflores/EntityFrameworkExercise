@@ -4,6 +4,7 @@ using EntityFrameworkExercise.Models;
 using EntityFrameworkExercise.ViewModel;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using Swashbuckle.AspNetCore.Annotations;
 using System.Collections.Generic;
 
 namespace EntityFrameworkExercise.Controllers;
@@ -12,10 +13,10 @@ namespace EntityFrameworkExercise.Controllers;
 [ApiController]
 public class CustomersController(StoreContext context) : ControllerBase
 {
-
-    // GET: api/Customers
+    [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(List<CustomerReadResponse>))]
+    [SwaggerOperation(Description = "Ola")]
     [HttpGet]
-    public async Task<ActionResult<IEnumerable<CustomerReadResponse>>> GetCustomers()
+    public async Task<IActionResult> GetCustomers()
     {
         var customerResponses = await context.Customers
             .Select(x => new CustomerReadResponse
@@ -29,9 +30,9 @@ public class CustomersController(StoreContext context) : ControllerBase
             return Ok(customerResponses);
     }
 
-    // GET: api/Customers/5
+    [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(CustomerReadResponse))]
     [HttpGet("{id}")]
-    public async Task<ActionResult<CustomerReadResponse>> GetCustomer(int id)
+    public async Task<IActionResult> GetCustomer(int id)
     {
         var customer = await context.Customers
             .Where(x => x.Id == id)
@@ -43,10 +44,16 @@ public class CustomersController(StoreContext context) : ControllerBase
             })
             .FirstOrDefaultAsync();
 
-        return customer;
+        if(customer == null)
+        {
+            return NotFound();
+        }
+
+        return Ok(customer);
     }
 
-    // PUT: api/Customers/5
+    [ProducesResponseType(StatusCodes.Status204NoContent)]
+    [ProducesResponseType(StatusCodes.Status400BadRequest)]
     [HttpPut("{id}")]
     public async Task<IActionResult> PutCustomer(int id, CustomerUpdateRequest edit)
     {
@@ -68,9 +75,9 @@ public class CustomersController(StoreContext context) : ControllerBase
         return NoContent();
     }
 
-    // POST: api/Customers
+    [ProducesResponseType(StatusCodes.Status201Created)]
     [HttpPost]
-    public async Task<ActionResult<Customer>> PostCustomer(CustomerCreateRequest create)
+    public async Task<IActionResult> PostCustomer(CustomerCreateRequest create)
     {
         var customer = new Customer
         {
@@ -84,7 +91,8 @@ public class CustomersController(StoreContext context) : ControllerBase
         return CreatedAtAction(nameof(GetCustomer), new { id = customer.Id }, null);
     }
 
-    // DELETE: api/Customers/5
+    [ProducesResponseType(StatusCodes.Status204NoContent)]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
     [HttpDelete("{id}")]
     public async Task<IActionResult> DeleteCustomer(int id)
     {
