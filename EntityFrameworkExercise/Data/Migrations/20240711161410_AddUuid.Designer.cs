@@ -11,7 +11,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace EntityFrameworkExercise.Data.Migrations
 {
     [DbContext(typeof(StoreContext))]
-    [Migration("20240711144656_AddUuid")]
+    [Migration("20240711161410_AddUuid")]
     partial class AddUuid
     {
         /// <inheritdoc />

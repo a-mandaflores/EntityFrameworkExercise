@@ -11,7 +11,7 @@ public class Sale
     public int Id { get; set; }
 
     [Column("uuid")]
-    public Guid Uuid { get; set; }
+    public Guid Uuid { get; set; } = Guid.NewGuid();
 
     [Column("date")]
     public DateTimeOffset Date { get; set; }

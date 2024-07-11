@@ -17,7 +17,7 @@ namespace EntityFrameworkExercise.Data.Migrations
                 table: "seller",
                 type: "TEXT",
                 nullable: false,
-                defaultValue: new Guid());
+                defaultValue: new Guid("00000000-0000-0000-0000-000000000000"));
 
             migrationBuilder.AddColumn<Guid>(
                 name: "uuid",
@@ -25,7 +25,7 @@ namespace EntityFrameworkExercise.Data.Migrations
                 table: "sale",
                 type: "TEXT",
                 nullable: false,
-                defaultValue: new Guid());
+                defaultValue: new Guid("00000000-0000-0000-0000-000000000000"));
 
             migrationBuilder.AddColumn<Guid>(
                 name: "uuid",
@@ -33,7 +33,7 @@ namespace EntityFrameworkExercise.Data.Migrations
                 table: "product",
                 type: "TEXT",
                 nullable: false,
-                defaultValue: new Guid());
+                defaultValue: new Guid("00000000-0000-0000-0000-000000000000"));
 
             migrationBuilder.AddColumn<Guid>(
                 name: "uuid",
@@ -41,7 +41,7 @@ namespace EntityFrameworkExercise.Data.Migrations
                 table: "customer",
                 type: "TEXT",
                 nullable: false,
-                defaultValue: new Guid());
+                defaultValue: new Guid("00000000-0000-0000-0000-000000000000"));
         }
 
         /// <inheritdoc />
