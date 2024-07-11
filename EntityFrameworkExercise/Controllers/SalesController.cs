@@ -18,6 +18,7 @@ namespace EntityFrameworkExercise.Controllers;
         [HttpGet]
         public async Task<ActionResult<IEnumerable<Sale>>> GetSales()
         {
+            
             return default;
         }
 

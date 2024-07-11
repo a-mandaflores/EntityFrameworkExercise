@@ -1,4 +1,4 @@
-﻿namespace EntityFrameworkExercise.ViewModel
+﻿namespace EntityFrameworkExercise.ViewModel.Product
 {
     public class ProductReadResponse
     {

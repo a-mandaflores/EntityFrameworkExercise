@@ -1,6 +1,6 @@
-﻿namespace EntityFrameworkExercise.ViewModel
+﻿namespace EntityFrameworkExercise.ViewModel.Product
 {
-    public class ProductCreateRequest
+    public class ProductUpdateRequest
     {
         public string Name { get; set; } = string.Empty;
         public decimal Price { get; set; } = default!;

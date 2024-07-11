@@ -1,8 +1,9 @@
 ﻿using EntityFrameworkExercise.Data;
 using EntityFrameworkExercise.Models;
-using EntityFrameworkExercise.ViewModel;
+using EntityFrameworkExercise.ViewModel.Product;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using Swashbuckle.AspNetCore.Annotations;
 using System.Linq;
 
 namespace EntityFrameworkExercise.Controllers;
@@ -11,7 +12,8 @@ namespace EntityFrameworkExercise.Controllers;
 [ApiController]
 public class ProductsController(StoreContext context) : ControllerBase
 {
-    // GET: api/Products
+    [ProducesResponseType(StatusCodes.Status200OK)]
+    [SwaggerOperation(Summary = "Lista dos produtos", Description = "Lista todos os produtos")]
     [HttpGet]
     public async Task<IActionResult> GetProducts()
     {
@@ -32,7 +34,8 @@ public class ProductsController(StoreContext context) : ControllerBase
         return Ok(products);
     }
 
-    // GET: api/Products/5
+    [ProducesResponseType(StatusCodes.Status200OK)]
+    [SwaggerOperation(Summary = "Lista um porduto", Description = "Lista o produto conforme o id passado pela URL")]
     [HttpGet("{id}")]
     public async Task<IActionResult> GetProduct(Guid id)
     {
@@ -53,7 +56,10 @@ public class ProductsController(StoreContext context) : ControllerBase
         return Ok(product);
     }
 
-    // PUT: api/Products/5
+    [ProducesResponseType(StatusCodes.Status204NoContent)]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
+    [ProducesResponseType(StatusCodes.Status400BadRequest)]
+    [SwaggerOperation(Summary = "Editar produto", Description = "Fas a edição do produto")]
     [HttpPut("{id}")]
     public async Task<IActionResult> PutProduct(Guid id, ProductUpdateRequest update)
     {
@@ -77,7 +83,9 @@ public class ProductsController(StoreContext context) : ControllerBase
         return NoContent();
     }
 
-    // POST: api/Products
+    [ProducesResponseType(StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(StatusCodes.Status204NoContent)]
+    [SwaggerOperation(Summary = "")]
     [HttpPost]
     public async Task<IActionResult> PostProduct(ProductCreateRequest create)
     {

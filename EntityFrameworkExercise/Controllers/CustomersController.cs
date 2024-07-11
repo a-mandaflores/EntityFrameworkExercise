@@ -1,7 +1,7 @@
 ﻿using Bogus.DataSets;
 using EntityFrameworkExercise.Data;
 using EntityFrameworkExercise.Models;
-using EntityFrameworkExercise.ViewModel;
+using EntityFrameworkExercise.ViewModel.Customer;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Swashbuckle.AspNetCore.Annotations;
