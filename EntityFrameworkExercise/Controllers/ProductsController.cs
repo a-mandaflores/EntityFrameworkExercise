@@ -1,7 +1,9 @@
 ﻿using EntityFrameworkExercise.Data;
 using EntityFrameworkExercise.Models;
+using EntityFrameworkExercise.ViewModel;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using System.Linq;
 
 namespace EntityFrameworkExercise.Controllers;
 
@@ -11,44 +13,61 @@ public class ProductsController(StoreContext context) : ControllerBase
 {
     // GET: api/Products
     [HttpGet]
-    public async Task<ActionResult<IEnumerable<Product>>?> GetProducts()
+    public async Task<IActionResult> GetProducts()
     {
-        var products = await context.Products.ToListAsync();
+        var products = await context.Products
+            .Select(x => new ProductReadResponse()
+            {
+                Uuid = x.Uuid,
+                Name = x.Name,
+                Price = x.Price,
+            })
+            .ToListAsync();
 
-        if(products.Count == 0)
+        if(products == null)
         {
-            return null;
+            return NotFound();
         }
 
-        return products;
+        return Ok(products);
     }
 
     // GET: api/Products/5
     [HttpGet("{id}")]
-    public async Task<ActionResult<Product>> GetProduct(int id)
+    public async Task<IActionResult> GetProduct(Guid id)
     {
-        var product = await context.Products.FirstOrDefaultAsync(x => x.Id == id);
+        var product = await context.Products
+            .Where(x => x.Uuid == id)
+            .Select (x => new ProductReadResponse
+            {
+                Uuid = x.Uuid,
+                Name = x.Name,
+                Price = x.Price,
+            })
+            .FirstOrDefaultAsync();
 
         if (product == null) { 
           return NotFound();
         }
 
-        return product;
+        return Ok(product);
     }
 
     // PUT: api/Products/5
     [HttpPut("{id}")]
-    public async Task<IActionResult> PutProduct(int id, Product product)
+    public async Task<IActionResult> PutProduct(Guid id, ProductUpdateRequest update)
     {
-        if (product.Id != id) { 
+        var product = await context.Products.Where(x => x.Uuid == id).FirstOrDefaultAsync();
+
+        if (product == null) {
             return NotFound();
         }
 
-        context.Products.Entry(product).State = EntityState.Modified;
+        product.Name = update.Name; 
+        product.Price = update.Price;
 
         try
         {
-
             await context.SaveChangesAsync();
         }
         catch (Exception ex) { 
@@ -60,9 +79,16 @@ public class ProductsController(StoreContext context) : ControllerBase
 
     // POST: api/Products
     [HttpPost]
-    public async Task<ActionResult<Product>> PostProduct(Product product)
+    public async Task<IActionResult> PostProduct(ProductCreateRequest create)
     {
+        var product = new Product
+        {
+            Name = create.Name,
+            Price = create.Price,
+        };
+
         context.Products.Add(product);
+       
         try
         {
             await context.SaveChangesAsync();
@@ -75,11 +101,11 @@ public class ProductsController(StoreContext context) : ControllerBase
 
     // DELETE: api/Products/5
     [HttpDelete("{id}")]
-    public async Task<IActionResult> DeleteProduct(int id)
+    public async Task<IActionResult> DeleteProduct(Guid id)
     {
-        var product = await context.Products.FindAsync(id);
+        var product = await context.Products.Where(x => x.Uuid == id).SingleOrDefaultAsync();
 
-        if( product == null) { return NotFound(); }
+        if ( product == null) { return NotFound(); }
 
         context.Products.Remove(product);
         try

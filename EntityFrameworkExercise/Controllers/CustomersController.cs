@@ -57,9 +57,9 @@ public class CustomersController(StoreContext context) : ControllerBase
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     [SwaggerOperation(Summary = "Editar dados do cliente", Description = "Edita os dados especificos do cliente")]
     [HttpPut("{id}")]
-    public async Task<IActionResult> PutCustomer(int id, CustomerUpdateRequest edit)
+    public async Task<IActionResult> PutCustomer(Guid id, CustomerUpdateRequest edit)
     {
-        var customer = await context.Customers.FindAsync(id);
+        var customer = await context.Customers.Where(x => x.Uuid == id).FirstOrDefaultAsync(); ;
         if (customer == null) {
             return BadRequest();
         }
@@ -99,9 +99,9 @@ public class CustomersController(StoreContext context) : ControllerBase
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     [SwaggerOperation(Summary = "Excluir cliente", Description = "Faz a exclusão do cliente que passarmos por rota")]
     [HttpDelete("{id}")]
-    public async Task<IActionResult> DeleteCustomer(int id)
+    public async Task<IActionResult> DeleteCustomer(Guid id)
     {
-        var customer = await context.Customers.FindAsync(id);
+        var customer = await context.Customers.Where(x => x.Uuid == id).SingleOrDefaultAsync();
 
         if (customer == null) 
         { 
