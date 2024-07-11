@@ -2,7 +2,7 @@
 {
     public class CustomerReadResponse
     {
-        public int Id { get; set; } = default!;
+        public Guid Id { get; set; } = default!;
         public string Name { get; set; } = string.Empty!;
         public int Sale { get; set; } = default!;
 

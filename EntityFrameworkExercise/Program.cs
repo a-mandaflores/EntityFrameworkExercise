@@ -18,6 +18,7 @@ services.AddDbContext<StoreContext>(options =>
     });
 });
 
+services.AddSwaggerGen(c => c.EnableAnnotations());
 services.AddControllers();
 
 services.AddEndpointsApiExplorer();

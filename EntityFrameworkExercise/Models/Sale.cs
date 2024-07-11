@@ -10,6 +10,9 @@ public class Sale
     [Column("id")]
     public int Id { get; set; }
 
+    [Column("uuid")]
+    public Guid Uuid { get; set; }
+
     [Column("date")]
     public DateTimeOffset Date { get; set; }
 
