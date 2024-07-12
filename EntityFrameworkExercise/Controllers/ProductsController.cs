@@ -20,7 +20,7 @@ public class ProductsController(StoreContext context) : ControllerBase
         var products = await context.Products
             .Select(x => new ProductReadResponse()
             {
-                Uuid = x.Uuid,
+                Id = x.Uuid,
                 Name = x.Name,
                 Price = x.Price,
             })
@@ -44,7 +44,7 @@ public class ProductsController(StoreContext context) : ControllerBase
             .Where(x => x.Uuid == id)
             .Select (x => new ProductReadResponse
             {
-                Uuid = x.Uuid,
+                Id = x.Uuid,
                 Name = x.Name,
                 Price = x.Price,
             })

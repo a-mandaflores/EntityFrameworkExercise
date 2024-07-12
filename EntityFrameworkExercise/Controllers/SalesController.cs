@@ -7,6 +7,10 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using EntityFrameworkExercise.Data;
 using EntityFrameworkExercise.Models;
+using EntityFrameworkExercise.ViewModel.Sales;
+using EntityFrameworkExercise.ViewModel.Seller;
+using EntityFrameworkExercise.ViewModel.Customer;
+using EntityFrameworkExercise.ViewModel.Product;
 
 namespace EntityFrameworkExercise.Controllers;
 
@@ -18,8 +22,33 @@ namespace EntityFrameworkExercise.Controllers;
         [HttpGet]
         public async Task<ActionResult<IEnumerable<Sale>>> GetSales()
         {
-            
-            return default;
+            var sales = await context.Sales
+                .Select(x => new SalesReadResponse
+                {
+                    Id = x.Uuid,
+                    Date = x.Date,
+                    SellerId = x.SellerId,
+                    Seller = new SellerReadResponse
+                    {
+                        Id = x.Seller.Uuid,
+                        Name = x.Seller.Name
+                    },
+                    CustomerId = x.CustomerId,
+                    Customer = new CustomerReadResponse
+                    {
+                        Id = x.Customer.Uuid,
+                        Name = x.Customer.Name
+                    },
+                    Products = x.Products.Select(p => new ProductReadResponse
+                    {
+                        Id = p.Uuid,
+                        Name = p.Name,
+                        Price = p.Price
+                    }).ToList()
+                })
+                .ToListAsync();
+
+            return Ok(sales);
         }
 
         // GET: api/Sales/5
