@@ -97,14 +97,12 @@ public class SellersController(StoreContext context) : ControllerBase
 
         try
         {
-
             await context.SaveChangesAsync();
         }
         catch (Exception ex)
         {
             return BadRequest(ex.Message);
         }
-
 
         return NoContent();
     }
@@ -140,12 +138,12 @@ public class SellersController(StoreContext context) : ControllerBase
     public async Task<IActionResult> DeleteSeller(Guid id)
     {
         var seller = await context.Sellers
-            .Where (x => x.Uuid == id)
+            .Where(x => x.Uuid == id)
             .SingleOrDefaultAsync();
 
         if (seller == null)
         {
-            return NotFound(); 
+            return NotFound();
         }
 
         context.Sellers.Remove(seller);
@@ -158,7 +156,6 @@ public class SellersController(StoreContext context) : ControllerBase
         {
             return BadRequest(ex.Message);
         }
-
 
         return NoContent();
     }

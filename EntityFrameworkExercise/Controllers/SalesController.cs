@@ -68,40 +68,52 @@ namespace EntityFrameworkExercise.Controllers;
         [HttpPost]
         public async Task<IActionResult> PostSale(SaleCreateRequest request)
         {
-        var sale = new Sale
-        {
-            Date = DateTimeOffset.Now,
-        };
 
-        var seller = await context.Sellers.FirstOrDefaultAsync(s => s.Uuid == request.Seller.Uuid);
-        var customer = await context.Customers.FirstOrDefaultAsync(s => s.Uuid == request.Seller.Uuid);
+            var sellerTask =  context.Sellers.FirstOrDefaultAsync(s => s.Uuid == request.Seller.Uuid);
 
-        var productsUuids = request.Products.ToList();
-        var products = await context.Products
-            .Where(p => productsUuids.Contains(p.Uuid))
-            .ToListAsync();
+            var customerTask =  context.Customers.FirstOrDefaultAsync(s => s.Uuid == request.Seller.Uuid);
 
-        if (customer == null || seller == null)
-        {
-            return NotFound();
+            var productsUuids = request.Products.Select(x => x.Uuid);
+
+            var productsTask =  context.Products
+                .Where(p => productsUuids.Contains(p.Uuid))
+                .ToListAsync();
+
+            await Task.WhenAll(sellerTask, customerTask, productsTask);
+
+            var seller = sellerTask.Result;
+            var customer = customerTask.Result;
+            var products = productsTask.Result;
+
+
+            if (customer == null || seller == null || products == null)
+                {
+                    return NotFound();
+                };
+
+                var sale = new Sale
+                {
+                    Date = DateTimeOffset.Now,
+                    Seller = seller,
+                    Customer = customer,
+                    Products = products,
+                };
+
+            
+
+
+                context.Sales.Add(sale);
+                try
+                {
+                    await context.SaveChangesAsync();
+                }
+                catch (Exception ex)
+                {
+                    return BadRequest(ex.Message);
+                }
+
+                return CreatedAtAction(nameof(GetSale), new { id = sale.Uuid }, sale);
         }
-
-        sale.Seller = seller;
-        sale.Customer = customer;
-
-
-        context.Sales.Add(sale);
-        try
-        {
-            await context.SaveChangesAsync();
-        }
-        catch (Exception ex)
-        {
-            return BadRequest(ex.Message);
-        }
-
-        return CreatedAtAction(nameof(GetSale), new { id = sale.Uuid }, sale);
-    }
 
         // DELETE: api/Sales/5
         [HttpDelete("{id}")]
