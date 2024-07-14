@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using EntityFrameworkExercise.Data;
 using EntityFrameworkExercise.Models;
@@ -11,6 +6,7 @@ using EntityFrameworkExercise.ViewModel.Sales;
 using EntityFrameworkExercise.ViewModel.Seller;
 using EntityFrameworkExercise.ViewModel.Customer;
 using EntityFrameworkExercise.ViewModel.Product;
+using System.Linq;
 
 namespace EntityFrameworkExercise.Controllers;
 
@@ -20,8 +16,9 @@ namespace EntityFrameworkExercise.Controllers;
     {
         // GET: api/Sales
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<Sale>>> GetSales()
+        public async Task<IActionResult> GetSales(int page = 1, int countElements = 5)
         {
+            var skip = (page - 1) * countElements;
             var sales = await context.Sales
                 .Select(x => new SalesReadResponse
                 {
@@ -46,6 +43,8 @@ namespace EntityFrameworkExercise.Controllers;
                         Price = p.Price
                     }).ToList()
                 })
+                .Skip(skip)
+                .Take(countElements)
                 .ToListAsync();
 
             return Ok(sales);
@@ -53,7 +52,7 @@ namespace EntityFrameworkExercise.Controllers;
 
         // GET: api/Sales/5
         [HttpGet("{id}")]
-        public async Task<ActionResult<Sale>> GetSale(int id)
+        public async Task<IActionResult> GetSale(int id)
         {
             return default;
         }
@@ -67,10 +66,42 @@ namespace EntityFrameworkExercise.Controllers;
 
         // POST: api/Sales
         [HttpPost]
-        public async Task<ActionResult<Sale>> PostSale(Sale sale)
+        public async Task<IActionResult> PostSale(SaleCreateRequest request)
         {
-            return default;
+        var sale = new Sale
+        {
+            Date = DateTimeOffset.Now,
+        };
+
+        var seller = await context.Sellers.FirstOrDefaultAsync(s => s.Uuid == request.Seller.Uuid);
+        var customer = await context.Customers.FirstOrDefaultAsync(s => s.Uuid == request.Seller.Uuid);
+
+        var productsUuids = request.Products.ToList();
+        var products = await context.Products
+            .Where(p => productsUuids.Contains(p.Uuid))
+            .ToListAsync();
+
+        if (customer == null || seller == null)
+        {
+            return NotFound();
         }
+
+        sale.Seller = seller;
+        sale.Customer = customer;
+
+
+        context.Sales.Add(sale);
+        try
+        {
+            await context.SaveChangesAsync();
+        }
+        catch (Exception ex)
+        {
+            return BadRequest(ex.Message);
+        }
+
+        return CreatedAtAction(nameof(GetSale), new { id = sale.Uuid }, sale);
+    }
 
         // DELETE: api/Sales/5
         [HttpDelete("{id}")]
