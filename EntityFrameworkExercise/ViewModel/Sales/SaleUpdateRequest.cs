@@ -2,8 +2,10 @@
 {
     public class SaleUpdateRequest
     {
-        public Guid SellerId { get; set; }
-        public Guid CustomerId { get; set; } 
+        public SellerCreateRequest SellerId { get; set; } = default!;
+        public CustomerCreateRequest CustomerId { get; set; } = default!;
+
+        public List<ProductCreateRequest> Products { get; set; } = default!;
 
     }
 }

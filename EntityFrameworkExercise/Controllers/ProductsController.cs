@@ -18,6 +18,7 @@ public class ProductsController(StoreContext context) : ControllerBase
     public async Task<IActionResult> GetProducts()
     {
         var products = await context.Products
+            .OrderBy(x => x.Id)
             .Select(x => new ProductReadResponse()
             {
                 Id = x.Uuid,

@@ -17,6 +17,7 @@ public class SellersController(StoreContext context) : ControllerBase
     public async Task<IActionResult> GetSellers()
     {
         var sellers = await context.Sellers
+            .OrderBy(x => x.Name)
             .Select(x => new SellerReadResponse
             {
                 Id = x.Uuid,

@@ -1,6 +1,7 @@
 ﻿using Bogus.DataSets;
 using EntityFrameworkExercise.Data;
 using EntityFrameworkExercise.Models;
+using EntityFrameworkExercise.ViewModel;
 using EntityFrameworkExercise.ViewModel.Customer;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -16,18 +17,30 @@ public class CustomersController(StoreContext context) : ControllerBase
     [ProducesResponseType(StatusCodes.Status200OK)]
     [SwaggerOperation(Summary = "Lista todos os elementos", Description = "Retorna uma lista com todos os clientes e a quantidade de compras")]
     [HttpGet]
-    public async Task<IActionResult> GetCustomers()
+    public async Task<IActionResult> GetCustomers(int page = 1, int countElements = 5)
     {
+        var skip = (page - 1) * countElements;
+        var pageCount = await context.Customers.CountAsync();
         var customerResponses = await context.Customers
-            .Select(x => new CustomerReadResponse
-            {
-                Id = x.Uuid,
-                Name = x.Name,
-                Sale = x.Sales.Count
-            })
-            .ToListAsync();
+        .OrderBy(x => x.Name)
+        .Select(x => new CustomerReadResponse
+        {
+            
+            Id = x.Uuid,
+            Name = x.Name,
+            Sale = x.Sales.Count
+        })
+        .Skip(skip)
+        .Take(countElements)
+        .ToListAsync();
 
-            return Ok(customerResponses);
+        var result = new ResultListResponse<CustomerReadResponse>
+        {
+            Data = customerResponses,
+            PageCount = pageCount / countElements
+        };
+
+            return Ok(result);
     }
 
     [ProducesResponseType(StatusCodes.Status200OK)]
@@ -46,7 +59,7 @@ public class CustomersController(StoreContext context) : ControllerBase
             })
             .FirstOrDefaultAsync();
 
-        if(customer == null)
+        if (customer == null)
         {
             return NotFound();
         }
@@ -61,7 +74,8 @@ public class CustomersController(StoreContext context) : ControllerBase
     public async Task<IActionResult> PutCustomer(Guid id, CustomerUpdateRequest edit)
     {
         var customer = await context.Customers.Where(x => x.Uuid == id).FirstOrDefaultAsync(); ;
-        if (customer == null) {
+        if (customer == null)
+        {
             return BadRequest();
         }
 
@@ -85,7 +99,6 @@ public class CustomersController(StoreContext context) : ControllerBase
     {
         var customer = new Customer
         {
-           
             Name = create.Name,
         };
 
@@ -104,17 +117,15 @@ public class CustomersController(StoreContext context) : ControllerBase
     {
         var customer = await context.Customers.Where(x => x.Uuid == id).SingleOrDefaultAsync();
 
-        if (customer == null) 
-        { 
-            return NotFound(); 
+        if (customer == null)
+        {
+            return NotFound();
         }
 
         context.Customers.Remove(customer);
 
         await context.SaveChangesAsync();
 
-        return NoContent(); 
+        return NoContent();
     }
-
-   
 }

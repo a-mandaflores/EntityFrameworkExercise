@@ -9,7 +9,8 @@ namespace EntityFrameworkExercise.ViewModel.Sales
 {
     public class SalesReadResponse
     {
-        public Guid Id { get; set; } = default!;
+
+        public Guid Id { get; set; }
         public DateTimeOffset Date { get; set; }
         public int SellerId { get; set; }
         public SellerReadResponse Seller { get; set; } = default!;
@@ -18,6 +19,6 @@ namespace EntityFrameworkExercise.ViewModel.Sales
 
         public CustomerReadResponse Customer { get; set; } = default!;
 
-        public List<ProductReadResponse> Products { get; set; } = default!;
+        public int Products { get; set; } = default!;
     }
 }
